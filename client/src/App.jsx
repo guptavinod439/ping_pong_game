@@ -17,6 +17,8 @@ const defaultState = {
 const keyMap = {
   KeyW: 'up',
   KeyS: 'down',
+  KeyA: 'up',
+  KeyD: 'down',
   ArrowUp: 'up',
   ArrowDown: 'down',
 };
@@ -172,7 +174,7 @@ function App() {
       <div>{roleLabel}</div>
       <canvas ref={canvasRef} style={{ border: '1px solid #555' }} />
       <div style={{ fontSize: '12px', opacity: 0.8 }}>
-        Controls: W/S or Arrow Up/Down
+        Controls: W/S or A/D (Arrow Up/Down also supported)
       </div>
     </div>
   );
