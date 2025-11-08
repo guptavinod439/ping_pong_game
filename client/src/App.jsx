@@ -4,54 +4,28 @@ const INPUT_INTERVAL = 1000 / 30;
 
 const defaultState = {
   players: {
-    1: { y: (500 - 80) / 2 },
-    2: { y: (500 - 80) / 2 },
+    1: { y: 0 },
+    2: { y: 0 },
   },
-  ball: { x: 800 / 2, y: 500 / 2 },
+  ball: { x: 0, y: 0 },
   score: { 1: 0, 2: 0 },
   bounds: { width: 800, height: 500 },
   paddle: { w: 12, h: 80 },
   ballRadius: 8,
 };
 
-function normaliseState(incoming) {
-  const players = incoming?.players ?? {};
-  const score = incoming?.score ?? {};
-  return {
-    players: {
-      1: { y: players[1]?.y ?? players['1']?.y ?? defaultState.players[1].y },
-      2: { y: players[2]?.y ?? players['2']?.y ?? defaultState.players[2].y },
-    },
-    ball: {
-      x: incoming?.ball?.x ?? defaultState.ball.x,
-      y: incoming?.ball?.y ?? defaultState.ball.y,
-    },
-    score: {
-      1: score[1] ?? score['1'] ?? defaultState.score[1],
-      2: score[2] ?? score['2'] ?? defaultState.score[2],
-    },
-    bounds: {
-      width: incoming?.bounds?.width ?? defaultState.bounds.width,
-      height: incoming?.bounds?.height ?? defaultState.bounds.height,
-    },
-    paddle: {
-      w: incoming?.paddle?.w ?? defaultState.paddle.w,
-      h: incoming?.paddle?.h ?? defaultState.paddle.h,
-    },
-    ballRadius: incoming?.ballRadius ?? defaultState.ballRadius,
-  };
-}
-
 const keyMap = {
   KeyW: 'up',
   KeyS: 'down',
+  KeyA: 'up',
+  KeyD: 'down',
   ArrowUp: 'up',
   ArrowDown: 'down',
 };
 
 function useWebSocketState() {
   const [assignedPlayer, setAssignedPlayer] = useState(null);
-  const [state, setState] = useState(() => normaliseState());
+  const [state, setState] = useState(defaultState);
   const wsRef = useRef(null);
   const inputRef = useRef({ up: false, down: false });
 
@@ -70,7 +44,7 @@ function useWebSocketState() {
       if (data.type === 'assign') {
         setAssignedPlayer(data.player === null ? 'spectator' : data.player);
       } else if (data.type === 'state') {
-        setState((prev) => normaliseState({ ...prev, ...data }));
+        setState((prev) => ({ ...prev, ...data }));
       }
     });
 
@@ -200,7 +174,7 @@ function App() {
       <div>{roleLabel}</div>
       <canvas ref={canvasRef} style={{ border: '1px solid #555' }} />
       <div style={{ fontSize: '12px', opacity: 0.8 }}>
-        Controls: W/S or Arrow Up/Down
+        Controls: W/S or A/D (Arrow Up/Down also supported)
       </div>
     </div>
   );
